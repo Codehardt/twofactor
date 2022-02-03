@@ -60,11 +60,6 @@ func (otp *Totp) synchronizeCounter(offset int) {
 	otp.clientOffset = offset
 }
 
-// Label returns the combination of issuer:account string
-func (otp *Totp) label() string {
-	return fmt.Sprintf("%s:%s", url.PathEscape(otp.issuer), otp.account)
-}
-
 // Counter returns the TOTP's 8-byte counter as unsigned 64-bit integer.
 func (otp *Totp) getIntCounter() uint64 {
 	return bigendian.FromUint64(otp.counter)
@@ -281,7 +276,7 @@ func (otp *Totp) Secret() string {
 
 // URL returns a suitable URL, such as for the Google Authenticator app
 // example: otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example
-func (otp *Totp) url() (string, error) {
+func (otp *Totp) url(path string) (string, error) {
 
 	// verify the proper initialization
 	if err := totpHasBeenInitialized(otp); err != nil {
@@ -293,7 +288,7 @@ func (otp *Totp) url() (string, error) {
 	v := url.Values{}
 	u.Scheme = "otpauth"
 	u.Host = "totp"
-	u.Path = otp.label()
+	u.Path = path
 	v.Add("secret", secret)
 	v.Add("counter", fmt.Sprintf("%d", otp.getIntCounter()))
 	v.Add("issuer", otp.issuer)
@@ -319,10 +314,10 @@ func (otp *Totp) url() (string, error) {
 // The QR code should be displayed only the first time the user enabled the Two-Factor authentication.
 // The QR code contains the shared KEY between the server application and the client application,
 // therefore the QR code should be delivered via secure connection.
-func (otp *Totp) QR() ([]byte, error) {
+func (otp *Totp) QR(label string) ([]byte, error) {
 
 	// get the URL
-	u, err := otp.url()
+	u, err := otp.url(url.PathEscape(label))
 
 	// check for errors during initialization
 	// this is already done on the URL method
