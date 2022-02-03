@@ -62,7 +62,7 @@ func (otp *Totp) synchronizeCounter(offset int) {
 
 // Label returns the combination of issuer:account string
 func (otp *Totp) label() string {
-	return fmt.Sprintf("%s:%s", url.QueryEscape(otp.issuer), otp.account)
+	return fmt.Sprintf("%s:%s", url.PathEscape(otp.issuer), otp.account)
 }
 
 // Counter returns the TOTP's 8-byte counter as unsigned 64-bit integer.
