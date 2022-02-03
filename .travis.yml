@@ -1,12 +1,7 @@
 language: go
 
 go:
-  - 1.6.2
-
-install:
-  - go get "github.com/sec51/qrcode"
-  - go get "github.com/sec51/cryptoengine"
-  - go get "github.com/sec51/convert/smallendian"
+  - 1.16.0
 
 script:
   - go test -v ./...
