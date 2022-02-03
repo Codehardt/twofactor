@@ -317,7 +317,7 @@ func (otp *Totp) url(path string) (string, error) {
 func (otp *Totp) QR(label string) ([]byte, error) {
 
 	// get the URL
-	u, err := otp.url(url.PathEscape(label))
+	u, err := otp.url(label)
 
 	// check for errors during initialization
 	// this is already done on the URL method
